@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Airtable Form</title>
+</head>
+<body>
+    <h2>Submit Data to Airtable</h2>
+    <form id="airtableForm">
+        <label>Name:</label>
+        <input type="text" id="name" required>
+        <br><br>
+
+        <label>Email:</label>
+        <input type="email" id="email" required>
+        <br><br>
+
+        <label>Age:</label>
+        <input type="number" id="age" required>
+        <br><br>
+
+        <button type="submit" id="submitBtn">Submit</button>
+    </form>
+
+    <p id="message"></p>
+
+    <h2>Stored Records</h2>
+    <button onclick="fetchData()">Refresh Data</button>
+    <ul id="recordList"></ul>
+
+    <script>
+        let apiKey = "api key"; //paste your airtable api key here
+        let baseId = "baseid"; //paste your airtable base id her
+        let tableName = "table name"; //replace with your table name
+        let url = `https://api.airtable.com/v0/${baseId}/${tableName}`;
+
+        let submitBtn = document.getElementById("submitBtn");
+        let form = document.getElementById("airtableForm");
+
+        // Disable Submit button after clicking
+        form.addEventListener("submit", async function(event) {
+            event.preventDefault();
+            submitBtn.disabled = true;
+
+            let name = document.getElementById("name").value;
+            let email = document.getElementById("email").value;
+            let age = document.getElementById("age").value;
+
+            let data = {
+                "records": [
+                    {
+                        "fields": {
+                            "Name": name,
+                            "Email": email,
+                            "Age": parseInt(age)
+                        }
+                    }
+                ]
+            };
+
+            try {
+                let response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                let result = await response.json();
+                console.log("Airtable Response:", result);
+
+                if (response.ok) {
+                    document.getElementById("message").innerText = "✅ Data submitted successfully!";
+                    form.reset();
+                    fetchData(); // Refresh data after submission
+                } else {
+                    document.getElementById("message").innerText = "❌ Error submitting data.";
+                    alert("Error: " + JSON.stringify(result));
+                }
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                alert("Fetch Error: " + error);
+            }
+        });
+
+        // Enable Submit button when user edits any field
+        document.querySelectorAll("#airtableForm input").forEach(input => {
+            input.addEventListener("input", () => {
+                submitBtn.disabled = false;
+            });
+        });
+
+        // Fetch data from Airtable and display it
+        async function fetchData() {
+            try {
+                let response = await fetch(url, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${apiKey}`
+                    }
+                });
+
+                let result = await response.json();
+                console.log("Fetched Data:", result);
+
+                let recordList = document.getElementById("recordList");
+                recordList.innerHTML = ""; // Clear previous records
+
+                result.records.forEach(record => {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = `${record.fields.Name} - ${record.fields.Email} - ${record.fields.Age}`;
+                    recordList.appendChild(listItem);
+                });
+
+            } catch (error) {
+                console.error("Fetch Error:", error);
+                alert("Error fetching data: " + error);
+            }
+        }
+
+        // Auto-fetch data on page load
+        window.onload = fetchData;
+    </script>
+</body>
+</html>

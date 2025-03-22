@@ -29,6 +29,30 @@ Your Airtable API key can be exposed in the browser. Consider using a **backend 
 
 ---
 
+## 🔄 Airtable Setup Instructions  
+
+### **1️⃣ Create an Airtable Account**  
+Go to **[Airtable.com](https://airtable.com/)** and sign up or log in.  
+
+### **2️⃣ Create a New Base**  
+- Click **"Create a Base"** (or open an existing one).  
+- Note down your **Base ID** (found in the URL after `/app`).  
+
+### **3️⃣ Create a Table**  
+- Name the table **(e.g., "Sample")**.  
+- Add the following **columns (fields)**:  
+  - `Name` → Type: **Single line text**  
+  - `Email` → Type: **Email**  
+  - `Age` → Type: **Number**  
+
+### **4️⃣ Get Your API Key & Base ID**  
+- Go to **[Airtable API](https://airtable.com/api)**  
+- Select your base → Find your **Base ID** at the top.  
+- Click on your profile (top-right corner) → **"Developer Hub"** → **"API Key"**  
+- Copy your API key and replace it in the code.  
+
+---
+
 ## ▶️ Run the Project  
 
 - **Simply double-click** on `index.html` to open it in a browser ✅  
